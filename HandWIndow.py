@@ -7,6 +7,7 @@ import numpy as np
 import pyautogui
 import mouse
 import win32api, win32con
+from win32api import GetSystemMetrics
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -17,8 +18,8 @@ l = False
 Move = False
 Util = False
 VideoGame = True
-x = 0
-y = 0
+x = GetSystemMetrics(0) // 2
+y = GetSystemMetrics(1) // 2 + 11
 cap = cv2.VideoCapture(0)
 
 def distance(P1, P2):
@@ -113,6 +114,9 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                 LLPinky = distance(LLastHand.landmark[4], LLastHand.landmark[20])
 
                 # Video Game Mouse
+                if(VideoGame==True):
+                    x = GetSystemMetrics(0) // 2
+                    y = GetSystemMetrics(1) // 2 + 1
                 if(FAR(LPoint) and FAR(LMiddle) and CLOSE(LRing) and CLOSE(LPinky) and FAR(LLRing) and FAR(LLPinky)):
                     if(VideoGame==True):
                         VideoGame=False
@@ -163,9 +167,9 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
 
                 # Hand Mouse Move
                 if(abs(RNowHand.landmark[9].x-RLastHand.landmark[9].x) > 0.005 and FAR(RPoint) or abs(RNowHand.landmark[9].x-RLastHand.landmark[9].x) > 0.005 and FAR(RMiddle)):
-                    x = (RNowHand.landmark[9].x-RLastHand.landmark[9].x)*5000
+                    x += (RNowHand.landmark[9].x-RLastHand.landmark[9].x)*5000
                 if(abs(RNowHand.landmark[9].y-RLastHand.landmark[9].y) > 0.005 and FAR(RPoint) or abs(RNowHand.landmark[9].y-RLastHand.landmark[9].y) > 0.005 and FAR(RMiddle)):
-                    y = (RNowHand.landmark[9].y-RLastHand.landmark[9].y)*5000
+                    y += (RNowHand.landmark[9].y-RLastHand.landmark[9].y)*5000
 
                 # Hand Mouse Scroll
                 #if(CLOSE(RRing) and FAR(RPinky) and FAR(RMiddle)):
@@ -213,7 +217,7 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     pyautogui.press('q')
                 if(CLOSE(RPinky) and FAR(RLPinky) and FAR(RPoint) and FAR(RRing) and FAR(RMiddle) and Util and not Move):
                     pyautogui.press('r')
-            mouse.move(pyautogui.position()[0]+x, pyautogui.position()[1]+y)
+            win32api.SetCursorPos((int(x), int(y)))
             x=0
             y=0
             if(r == True):
