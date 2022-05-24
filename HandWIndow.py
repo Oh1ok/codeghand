@@ -12,8 +12,8 @@ import mouse
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-x = mouse.get_position()[0]
-y = mouse.get_position()[1]
+x = pyautogui.position()[0] // 2
+y = pyautogui.position()[1] // 2 + 1
 zr = True
 zl = True
 Move = False
@@ -115,8 +115,8 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                 
                 # Video Game Mouse
                 if(VideoGame==True):
-                    x = GetSystemMetrics(0) // 2
-                    y = GetSystemMetrics(1) // 2 + 1
+                    x = pyautogui.position()[0] // 2
+                    y = pyautogui.position()[1] // 2 + 1
                 if(FAR(LPoint) and FAR(LMiddle) and CLOSE(LRing) and CLOSE(LPinky) and FAR(LLRing) and FAR(LLPinky)):
                     if(VideoGame==True):
                         VideoGame=False
