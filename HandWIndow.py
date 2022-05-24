@@ -7,6 +7,7 @@ import numpy as np
 import pyautogui
 import mouse
 import win32api, win32con
+import autopy
 from win32api import GetSystemMetrics
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
@@ -217,7 +218,7 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     pyautogui.press('q')
                 if(CLOSE(RPinky) and FAR(RLPinky) and FAR(RPoint) and FAR(RRing) and FAR(RMiddle) and Util and not Move):
                     pyautogui.press('r')
-            win32api.SetCursorPos((int(x), int(y)))
+            autopy.mouse.smooth_move(x, y)
             x=0
             y=0
             if(r == True):
