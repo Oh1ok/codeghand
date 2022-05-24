@@ -7,10 +7,6 @@ import numpy as np
 import pyautogui
 import mouse
 import win32api, win32con
-def click(x,y):
-    win32api.SetCursorPos((x,y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -217,7 +213,7 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     pyautogui.press('q')
                 if(CLOSE(RPinky) and FAR(RLPinky) and FAR(RPoint) and FAR(RRing) and FAR(RMiddle) and Util and not Move):
                     pyautogui.press('r')
-            click(pyautogui.position()[0]+x, pyautogui.position()[1]+y)
+            mouse.move(pyautogui.position()[0]+x, pyautogui.position()[1]+y)
             x=0
             y=0
             if(r == True):
