@@ -8,11 +8,12 @@ import pydirectinput
 import win32api
 import win32con
 from win32api import GetSystemMetrics
+import mouse
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-x = GetSystemMetrics(0) // 2
-y = GetSystemMetrics(1) // 2 + 11
+x = mouse.get_position()[0]
+y = mouse.get_position()[1]
 zr = True
 zl = True
 Move = False
@@ -217,14 +218,15 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     pyautogui.press('q')
                 if(CLOSE(RPinky) and FAR(RLPinky) and FAR(RPoint) and FAR(RRing) and FAR(RMiddle) and Util and not Move):
                     pyautogui.press('r')
-
-            win32api.SetCursorPos((int(x), int(y)))
+            y -= 10
+            mouse.move(x, y)
             if(r == True):
                 RLastHand = RNowHand
             if(l == True):
                 LLastHand = LNowHand
             r = False
             l = False
+
         cv2.imshow('Hand Tracking', image)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
