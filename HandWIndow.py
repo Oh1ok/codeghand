@@ -1,23 +1,25 @@
 import os
-from shutil import move
 import uuid
 import cv2
 import mediapipe as mp
 import numpy as np
 import pyautogui
-import mouse
-pyautogui.FAILSAFE = False
+import pydirectinput
+import win32api
+import win32con
+from win32api import GetSystemMetrics
+
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
+x = GetSystemMetrics(0) // 2
+y = GetSystemMetrics(1) // 2 + 11
 zr = True
 zl = True
-r = False
-l = False
 Move = False
 Util = False
+r = False
+l = False
 VideoGame = True
-x = 0
-y = 0
 cap = cv2.VideoCapture(0)
 
 def distance(P1, P2):
@@ -91,8 +93,7 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     if(zl == True):
                         LLastHand = LNowHand
                         zl = False
-            if not l and not r:
-                pyautogui.keyUp('shift')                             
+                                            
             if l:
                 # Draw Left Hand
                 mp_drawing.draw_landmarks(image, LNowHand, mp_hands.HAND_CONNECTIONS,
@@ -110,8 +111,11 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                 LLMiddle = distance(LLastHand.landmark[4], LLastHand.landmark[12])
                 LLRing = distance(LLastHand.landmark[4], LLastHand.landmark[16])
                 LLPinky = distance(LLastHand.landmark[4], LLastHand.landmark[20])
-
+                
                 # Video Game Mouse
+                if(VideoGame==True):
+                    x = GetSystemMetrics(0) // 2
+                    y = GetSystemMetrics(1) // 2 + 1
                 if(FAR(LPoint) and FAR(LMiddle) and CLOSE(LRing) and CLOSE(LPinky) and FAR(LLRing) and FAR(LLPinky)):
                     if(VideoGame==True):
                         VideoGame=False
@@ -136,6 +140,7 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     Util = True
                 if(FAR(LMiddle) and CLOSE(LLMiddle)):
                     Util = False
+                
             if r:
                 # Draw Right Hand
                 mp_drawing.draw_landmarks(image, RNowHand, mp_hands.HAND_CONNECTIONS,
@@ -162,13 +167,13 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
 
                 # Hand Mouse Move
                 if(abs(RNowHand.landmark[9].x-RLastHand.landmark[9].x) > 0.005 and FAR(RPoint) or abs(RNowHand.landmark[9].x-RLastHand.landmark[9].x) > 0.005 and FAR(RMiddle)):
-                    x = (RNowHand.landmark[9].x-RLastHand.landmark[9].x)*5000
+                    x += (RNowHand.landmark[9].x-RLastHand.landmark[9].x)*5000
                 if(abs(RNowHand.landmark[9].y-RLastHand.landmark[9].y) > 0.005 and FAR(RPoint) or abs(RNowHand.landmark[9].y-RLastHand.landmark[9].y) > 0.005 and FAR(RMiddle)):
-                    y = (RNowHand.landmark[9].y-RLastHand.landmark[9].y)*5000
+                    y += (RNowHand.landmark[9].y-RLastHand.landmark[9].y)*5000
 
                 # Hand Mouse Scroll
-                #if(CLOSE(RRing) and FAR(RPinky) and FAR(RMiddle)):
-                #    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, int(x), int(y), int((RLastHand.landmark[9].y-RNowHand.landmark[9].y)*10000), 0)
+                if(CLOSE(RRing) and FAR(RPinky) and FAR(RMiddle)):
+                    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, int(x), int(y), int((RLastHand.landmark[9].y-RNowHand.landmark[9].y)*10000), 0)
 
                 # Left Click
                 if(CLOSE(RPoint) and FAR(RLPoint) and FAR(RMiddle) and FAR(RRing) and FAR(RPinky) and not Move and not Util):
@@ -212,9 +217,8 @@ with mp_hands.Hands(min_detection_confidence=0.75, min_tracking_confidence=0.4) 
                     pyautogui.press('q')
                 if(CLOSE(RPinky) and FAR(RLPinky) and FAR(RPoint) and FAR(RRing) and FAR(RMiddle) and Util and not Move):
                     pyautogui.press('r')
-            mouse.move(pyautogui.position()[0]+x, pyautogui.position()[1]+y)
-            x=0
-            y=0
+
+            win32api.SetCursorPos((int(x), int(y)))
             if(r == True):
                 RLastHand = RNowHand
             if(l == True):
